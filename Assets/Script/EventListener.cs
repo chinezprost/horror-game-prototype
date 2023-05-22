@@ -1,19 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class EventListener : MonoBehaviour
 {
     public GameObject TerminalWindow;
+    private TMP_InputField TerminalWindow_InputField;
     public bool IsTerminalOpen = false;
     
-    // Start is called before the first frame update
     void Start()
     {
-        
+        TerminalWindow_InputField = TerminalWindow.GetComponentInChildren<TMP_InputField>();
     }
-
-    // Update is called once per frame
+    
     void Update()
     {
         TerminalEventListener();
@@ -32,6 +32,7 @@ public class EventListener : MonoBehaviour
             {
                 IsTerminalOpen = true;
                 TerminalWindow.SetActive(true);
+                TerminalWindow_InputField.ActivateInputField();
             }
         }
         

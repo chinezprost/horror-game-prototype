@@ -72,7 +72,6 @@ public class TerminalScript : MonoBehaviour
         if (command == "")
             return;
         
-        string commandString = "";
         string auxString = "";
         List<string> args = new List<string>();
         int index = 0;
@@ -96,7 +95,6 @@ public class TerminalScript : MonoBehaviour
         ProcessCommand(auxString, args);
         previousCommands.Add(command);
         auxString = "";
-        commandString = "";
     }
 
     void TerminalLogic()
@@ -222,19 +220,19 @@ public class TerminalScript : MonoBehaviour
         }
     }
 
-    void StartHostCommand()
+    public bool StartHostCommand()
     {
-        NetworkManager.Singleton.StartHost();
+        return NetworkManager.Singleton.StartHost();
 
     }
 
-    void StartServerCommand()
+    public void StartServerCommand()
     {
         NetworkManager.Singleton.StartServer();
 
     }
 
-    void StartClientCommand()
+    public void StartClientCommand()
     {
         NetworkManager.Singleton.StartClient();
 
