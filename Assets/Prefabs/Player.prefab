@@ -175,15 +175,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80e1328e23c73ee4c96053df59d7183d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerHeadbobController: {fileID: 0}
+  PlayerInventory: {fileID: 0}
+  CameraController: {fileID: 0}
   PlayerRigidbody: {fileID: 0}
   PlayerCamera: {fileID: 0}
   CameraHolder: {fileID: 0}
   speedModifier: 0.1
-  runningSpeed: 2
+  runningSpeed: 3.75
   sensitivityModifier: 1
   deaccelerationCoef: 50
-  accelerationCoef: 10
+  accelerationCoef: 17.5
   maximumAccelerationCoef: 10
 --- !u!114 &4242287081325796375
 MonoBehaviour:

@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using JetBrains.Annotations;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class PlayerInventory : MonoBehaviour
 {
@@ -34,30 +36,19 @@ public class PlayerInventory : MonoBehaviour
 
     private void AddItem(Item item)
     {
-        if(playerInventory.ContainsKey(item))
-            playerInventory[item]++;
-        else
-        {
-            playerInventory.Add(item, playerInventory.Count + 1);
-        }
+        playerInventory.Add(item, playerInventory.Count + 1);
 
         UpdateInventoryText();
     }
 
-    private bool HasItem(Item item)
+    private void HasItem(Item item)
     {
-        if (playerInventory.ContainsKey(item))
-            return false;
-        return true;
         
         UpdateInventoryText();
     }
 
-    private bool DropItem(Item item)
+    private void DropItem(Item item)
     {
-        if (playerInventory[item] == 0)
-            return false;
-        return true;
         
         UpdateInventoryText();
     }
@@ -76,25 +67,28 @@ public class PlayerInventory : MonoBehaviour
 
 public abstract class Item
 {
-    
+    private int _ID = -1;
+    protected Item()
+    {
+        _ID = Random.Range(0, 10000);
+    }
+
+    public int GetItemID()
+    {
+        return this._ID;
+    }
 }
 
 public class Flashlight : Item
 {
-    private int batteryLevel = 5;
+    private int BatteryLevel;
     public Flashlight()
     {
-        batteryLevel = 12;
+        BatteryLevel = Random.Range(10, 20);
     }
-    
 }
 
 public class Bandage : Item
 {
-    private int healthAmount = 10;
-    public Bandage()
-    {
-        healthAmount = 5;
-    }
-    
+    private int HealAmount = 10;
 }

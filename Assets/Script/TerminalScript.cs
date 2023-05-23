@@ -25,8 +25,7 @@ public class TerminalScript : MonoBehaviour
     public TextMeshProUGUI terminalText;
     public TMP_InputField terminalInputfield;
 
-    public int terminalCommandIndex = 0;
-
+    private int terminalCommandIndex = 0;
     public bool isTerminalOpen = true;
     
     

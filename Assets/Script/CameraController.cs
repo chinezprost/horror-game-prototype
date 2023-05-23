@@ -1,16 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
-public class HeadBobController : MonoBehaviour
+public class CameraController : MonoBehaviour
 {
 
     [SerializeField] private bool isEnabled = true;
     
     [SerializeField, Range(0, 0.1f)] private float amplitude = 0.013f;
     [SerializeField, Range(0, 30)] private float frequency = 13.0f;
-
+    [SerializeField, Range(10, 80)] private float fieldOfView = 75f;
+    [SerializeField] private float fovChangeCoef = 10f;
     
 
     private float toggleSpeed = 0.01f;
@@ -19,17 +21,14 @@ public class HeadBobController : MonoBehaviour
     private Rigidbody playerRigidbody;
 
     public Transform camera;
+    public Camera cameraComponent;
     public Transform cameraHolder;
 
-    void Awake()
-    {
-        playerRigidbody = GetComponent<Rigidbody>();
-        startPos = camera.localPosition;
-    }
-    
     void Start()
     {
-        
+        playerRigidbody = GetComponent<Rigidbody>();
+        cameraComponent = GetComponentInChildren<Camera>();
+        startPos = camera.localPosition;
     }
 
     // Update is called once per frame
@@ -39,12 +38,20 @@ public class HeadBobController : MonoBehaviour
         
         
         CheckMotion();
+        FieldOfViewLogic();
         ResetPosition();
         camera.LookAt(FocusTarget());
     }
 
-    
-    
+    private void FieldOfViewLogic()
+    {
+        cameraComponent.fieldOfView = currentSpeed switch
+        {
+            >.1f => Mathf.Lerp(cameraComponent.fieldOfView, fieldOfView + currentSpeed * fovChangeCoef, Time.deltaTime),
+            _ => Mathf.Lerp(cameraComponent.fieldOfView, fieldOfView, Time.deltaTime)
+        };
+    }
+
     private void ResetPosition()
     {
         if (camera.localPosition == startPos) return;

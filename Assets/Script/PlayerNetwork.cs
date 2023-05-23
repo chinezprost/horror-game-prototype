@@ -13,9 +13,10 @@ using Vector3 = UnityEngine.Vector3;
 
 public class PlayerNetwork : NetworkBehaviour
 {
+    
 
     public PlayerInventory PlayerInventory;
-    public HeadBobController PlayerHeadbobController;
+    public CameraController CameraController;
     public Rigidbody PlayerRigidbody;
     
     public GameObject PlayerCamera;
@@ -23,7 +24,7 @@ public class PlayerNetwork : NetworkBehaviour
 
     [Tooltip("PlayerSpeed")] 
     public float speedModifier = 4;
-    public float runningSpeed = 2;
+    public float runningSpeed = 4;
     public float sensitivityModifier = 1f;
 
     private float maxLookAngle = 87f;
@@ -51,10 +52,6 @@ public class PlayerNetwork : NetworkBehaviour
         PlayerCameraLogic();
     }
 
-    
-
-    
-
     public override void OnNetworkSpawn()
     {
         
@@ -68,10 +65,10 @@ public class PlayerNetwork : NetworkBehaviour
             Debug.Log("Spawned");
             
             PlayerRigidbody = this.gameObject.AddComponent<Rigidbody>();
-            PlayerHeadbobController = this.gameObject.AddComponent<HeadBobController>();
+            CameraController = this.gameObject.AddComponent<CameraController>();
             PlayerInventory = this.gameObject.AddComponent<PlayerInventory>();
             
-            PlayerHeadbobController.enabled = true;
+            CameraController.enabled = true;
             
             PlayerRigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
             PlayerRigidbody.automaticInertiaTensor = false;
@@ -94,8 +91,8 @@ public class PlayerNetwork : NetworkBehaviour
             PlayerCamera.transform.parent = Camera.main.transform;
             PlayerCamera.transform.position = new Vector3(0, 2, 0);
 
-            PlayerHeadbobController.camera = Camera.main.transform;
-            PlayerHeadbobController.cameraHolder = PlayerCamera.transform;
+            CameraController.camera = Camera.main.transform;
+            CameraController.cameraHolder = PlayerCamera.transform;
         }
         else
         {
@@ -196,6 +193,7 @@ public class PlayerNetwork : NetworkBehaviour
         {
             return;
         }
+
         
         var objectRotation = this.transform.rotation;
         PlayerRigidbody.MoveRotation(Quaternion.Euler(objectRotation.eulerAngles + new Vector3(0, Input.GetAxisRaw("Mouse X") * sensitivityModifier)));
