@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public class CameraController : MonoBehaviour
 {
@@ -12,7 +13,9 @@ public class CameraController : MonoBehaviour
     [SerializeField, Range(0, 0.1f)] private float amplitude = 0.013f;
     [SerializeField, Range(0, 30)] private float frequency = 13.0f;
     [SerializeField, Range(10, 80)] private float fieldOfView = 75f;
-    [SerializeField] private float fovChangeCoef = 10f;
+    [SerializeField] private float fovChangeCoef = 6f;
+
+    private PlayerNetwork localPlayerNetwork;
     
 
     private float toggleSpeed = 0.01f;
@@ -24,10 +27,12 @@ public class CameraController : MonoBehaviour
     public Camera cameraComponent;
     public Transform cameraHolder;
 
+
     void Start()
     {
         playerRigidbody = GetComponent<Rigidbody>();
         cameraComponent = GetComponentInChildren<Camera>();
+        localPlayerNetwork = GetComponent<PlayerNetwork>();
         startPos = camera.localPosition;
     }
 
@@ -45,6 +50,12 @@ public class CameraController : MonoBehaviour
 
     private void FieldOfViewLogic()
     {
+        if (!localPlayerNetwork.isMoving)
+        {
+            cameraComponent.fieldOfView = Mathf.Lerp(cameraComponent.fieldOfView, fieldOfView, Time.deltaTime * 2);
+            return;
+        }
+        
         cameraComponent.fieldOfView = currentSpeed switch
         {
             >.1f => Mathf.Lerp(cameraComponent.fieldOfView, fieldOfView + currentSpeed * fovChangeCoef, Time.deltaTime),
@@ -73,15 +84,17 @@ public class CameraController : MonoBehaviour
 
     private Vector3 FootStepMotion()
     {
-        Vector3 newPosition = Vector3.zero;
-        newPosition.x += Mathf.Cos(Time.time * frequency / 2) * amplitude * 2;
-        newPosition.y += Mathf.Sin(Time.time * frequency) * amplitude;
+        var newPosition = Vector3.zero;
+        var cosOffset = Mathf.Cos(Time.time * frequency / 2) * amplitude * 2;
+        var sinOffset = Mathf.Sin(Time.time * frequency) * amplitude;
+        newPosition.x += cosOffset * Time.deltaTime * 500;
+        newPosition.y += sinOffset * Time.deltaTime * 500;
         return newPosition;
     }
 
     private Vector3 FocusTarget()
     {
-        Vector3 newPosition = new Vector3(transform.position.x, transform.position.y + cameraHolder.localPosition.y, transform.position.z);
+        var newPosition = new Vector3(transform.position.x, transform.position.y + cameraHolder.localPosition.y, transform.position.z);
         newPosition += cameraHolder.forward * 15.0f;
         return newPosition;
 

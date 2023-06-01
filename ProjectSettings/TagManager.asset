@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Ground_Tile
+  - staminaSlider
   layers:
   - Default
   - TransparentFX
@@ -11,8 +13,8 @@ TagManager:
   - IgnoreCollide
   - Water
   - UI
-  - 
-  - 
+  - Ground_Tile
+  - IgnoreByCamera
   - 
   - 
   - 

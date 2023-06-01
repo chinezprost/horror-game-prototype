@@ -9,8 +9,13 @@ public class OnEditorPlay : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        #region application settings
+        Application.targetFrameRate = 144;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        #endregion
+        
+        #region clone manager
         if (ClonesManager.IsClone())
         {
             TerminalCommand.StartClientCommand();
@@ -19,11 +24,7 @@ public class OnEditorPlay : MonoBehaviour
         {
             TerminalCommand.StartHostCommand();
         }
+        #endregion
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

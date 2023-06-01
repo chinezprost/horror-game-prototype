@@ -28,7 +28,6 @@ public class TerminalScript : MonoBehaviour
     private int terminalCommandIndex = 0;
     public bool isTerminalOpen = true;
     
-    
     void Start()
     {
         terminalInputfield.onEndEdit.AddListener(delegate{OnInputFieldEnd(terminalInputfield);});
@@ -189,24 +188,20 @@ public class TerminalScript : MonoBehaviour
             PrintToTerminal("Command not found.", Colors.LightWarning);
         }
     }
-
     void ClearCommand()
     {
         terminalText.text = "";
         printedTerminalLines = "";
     }
-    
     void LogCommand(string value)
     {
         if (value.Length != 0) 
             PrintToTerminal(value, Colors.Default);
     }
-
     void PingCommand()
     {
         PrintToTerminal("Pong!", Colors.Default);
     }
-
     void ConnectCommand(string value)
     {
         if (value[0] == '1')
@@ -218,24 +213,19 @@ public class TerminalScript : MonoBehaviour
             PrintToTerminal("Couldn't connect to server! Cause: Host not reachable.", Colors.Red);
         }
     }
-
     public bool StartHostCommand()
     {
         return NetworkManager.Singleton.StartHost();
 
     }
-
     public void StartServerCommand()
     {
         NetworkManager.Singleton.StartServer();
 
     }
-
     public void StartClientCommand()
     {
         NetworkManager.Singleton.StartClient();
 
     }
-    
-    
 }
