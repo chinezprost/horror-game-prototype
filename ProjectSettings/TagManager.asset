@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Ground_Tile
   - staminaSlider
+  - JumpOver_Collider
+  - JumpOver_Collider_Out
+  - JumpOver_Collider_In
   layers:
   - Default
   - TransparentFX

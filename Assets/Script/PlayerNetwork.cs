@@ -20,6 +20,7 @@ public class PlayerNetwork : NetworkBehaviour
     public CameraController PlayerCameraController;
     public SoundManager PlayerSoundManager;
     public Rigidbody PlayerRigidbody;
+    public PlayerCollisionManager PlayerCollision;
     #endregion
     
     #region gameobjects
@@ -61,6 +62,8 @@ public class PlayerNetwork : NetworkBehaviour
     [SerializeField] public float accelerationCoef = 10;
     [SerializeField] public float maximumAccelerationCoef = 10;
 
+    private float lastJumpTime = -1f;
+
     private Vector3 currentPlayerVelocity = Vector3.zero;
     private Vector3 previousPlayerVelocity = Vector3.zero;
     
@@ -96,13 +99,21 @@ public class PlayerNetwork : NetworkBehaviour
     {
         if (!IsOwner || !IsSpawned)
             return;
-            
-            
+        
+        //turn of mesh
+        var playerBody = transform.Find("Player_Body");
+        if (playerBody != null)
+        {
+            playerBody.GetComponent<MeshRenderer>().enabled = false;
+        }
+
+
         PlayerRigidbody = this.gameObject.AddComponent<Rigidbody>();
         PlayerCameraController = this.gameObject.AddComponent<CameraController>();
         PlayerSoundManager = this.gameObject.AddComponent<SoundManager>();
         PlayerInventory = this.gameObject.AddComponent<PlayerInventory>();
         PlayerUI = this.gameObject.AddComponent<PlayerUIController>();
+        PlayerCollision = this.gameObject.AddComponent<PlayerCollisionManager>();
         PlayerBody = GameObject.Find("Player_Body");
             
         PlayerCameraController.enabled = true;
@@ -127,6 +138,14 @@ public class PlayerNetwork : NetworkBehaviour
         PlayerCameraController.camera = Camera.main.transform;
         PlayerCameraController.cameraHolder = PlayerCamera.transform;
     }
+
+    void JumpOverObstacleLogic(Transform finishTransform)
+    {
+        PlayerRigidbody.transform.position = finishTransform.position;
+    }
+    
+    
+    
     void PlayerMovementLogic()
     {
         if (!IsOwner || !IsSpawned)
@@ -149,7 +168,10 @@ public class PlayerNetwork : NetworkBehaviour
         currentPlayerVelocity = Vector3.zero;
         isRunning = false;
         isMoving = false;
-        
+
+        if (Time.time - lastJumpTime <= .1f)
+            return;
+
         if (Input.GetKey(KeyCode.W))
         {
             currentPlayerVelocity += Time.deltaTime * 1000 * transform.right;
@@ -174,6 +196,16 @@ public class PlayerNetwork : NetworkBehaviour
         {
             currentPlayerVelocity += Time.deltaTime * 1000 * -transform.forward;
             isRunning = false;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space) && PlayerCollision.isInJumpingTrigger)
+        {
+            lastJumpTime = Time.time;
+            if (PlayerCollision.isInwardsTrigger)
+                JumpOverObstacleLogic(PlayerCollision.jump_trigger_out);
+            else
+                JumpOverObstacleLogic(PlayerCollision.jump_trigger_in);            
+            return;
         }
         
         currentPlayerVelocity.Normalize();
@@ -257,5 +289,11 @@ public class PlayerNetwork : NetworkBehaviour
     
     
 }
+
+
+
+
+
+
 
 
