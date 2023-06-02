@@ -157,6 +157,7 @@ MonoBehaviour:
   PlayerCameraController: {fileID: 0}
   PlayerSoundManager: {fileID: 0}
   PlayerRigidbody: {fileID: 0}
+  PlayerCollision: {fileID: 0}
   PlayerCamera: {fileID: 0}
   CameraHolder: {fileID: 0}
   PlayerBody: {fileID: 0}
@@ -168,8 +169,8 @@ MonoBehaviour:
   accelerationCoeficient: 0
   isMoving: 0
   isRunning: 0
-  staminaIncreaseCoef: 1
-  staminaUsageCoef: 1.5
+  staminaIncreaseCoef: 0.95
+  staminaUsageCoef: 0.65
   canRun: 1
   playerStamina: 10
   isGrounded: 0

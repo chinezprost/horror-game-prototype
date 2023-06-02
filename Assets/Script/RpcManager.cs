@@ -25,7 +25,7 @@ public class RpcManager : NetworkBehaviour
 
     IEnumerator DespawnCorountine(NetworkObject networkObjectScript)
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(5f);
         networkObjectScript.Despawn();
 
     }

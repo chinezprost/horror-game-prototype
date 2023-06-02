@@ -14,6 +14,33 @@ using Vector3 = UnityEngine.Vector3;
 
 public class PlayerNetwork : NetworkBehaviour
 {
+
+    public NetworkVariable<bool> hasFlashlightTurnedOn = new NetworkVariable<bool>();
+
+    public override void OnNetworkSpawn()
+    {
+        hasFlashlightTurnedOn.OnValueChanged += FlashlightStateChanged;
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        hasFlashlightTurnedOn.OnValueChanged += FlashlightStateChanged;
+    }
+
+    public void FlashlightStateChanged(bool previousValue, bool currentValue)
+    {
+        if (hasFlashlightTurnedOn.Value)
+        {
+            
+        }
+        else
+        {
+            
+        }
+    }
+    
+    
+    
     #region scripts/componenets
     public PlayerUIController PlayerUI;
     public PlayerInventory PlayerInventory;
@@ -190,12 +217,10 @@ public class PlayerNetwork : NetworkBehaviour
         if (Input.GetKey(KeyCode.A))
         {
             currentPlayerVelocity += Time.deltaTime * 1000 * transform.forward;
-            isRunning = false;
         }
         if (Input.GetKey(KeyCode.D))
         {
             currentPlayerVelocity += Time.deltaTime * 1000 * -transform.forward;
-            isRunning = false;
         }
 
         if (Input.GetKeyDown(KeyCode.Space) && PlayerCollision.isInJumpingTrigger)
