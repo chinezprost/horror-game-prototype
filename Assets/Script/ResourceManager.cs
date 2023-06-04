@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class ResourceManager : MonoBehaviour
@@ -21,4 +20,7 @@ public class ResourceManager : MonoBehaviour
 
     public List<AudioClip> Footstep_SFX_Left;
     public List<AudioClip> Footstep_SFX_Right;
+
+    public List<AudioClip> Footstep_SFX_Run_Left;
+    public List<AudioClip> Footstep_SFX_Run_Right;
 }

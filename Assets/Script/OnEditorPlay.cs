@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if(UNITY_EDITOR)
 using ParrelSync;
+#endif
 
 public class OnEditorPlay : MonoBehaviour
 {
@@ -16,14 +18,20 @@ public class OnEditorPlay : MonoBehaviour
         #endregion
         
         #region clone manager
-        if (ClonesManager.IsClone())
-        {
-            TerminalCommand.StartClientCommand();
-        }
-        else
-        {
-            TerminalCommand.StartHostCommand();
-        }
+        // #if(UNITY_EDITOR)
+        // if (Application.isEditor)
+        // {
+        //     if (ClonesManager.IsClone())
+        //     {
+        //         TerminalCommand.StartClientCommand();
+        //     }
+        //     else
+        //     {
+        //         TerminalCommand.StartHostCommand();
+        //     }
+        // }
+        // #endif
+
         #endregion
     }
 

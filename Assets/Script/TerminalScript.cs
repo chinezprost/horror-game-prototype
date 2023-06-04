@@ -4,11 +4,10 @@ using System.Collections.Generic;
 using System.Net;
 using System.Numerics;
 using TMPro;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 
 public enum Colors
 {
@@ -37,8 +36,13 @@ public class TerminalScript : MonoBehaviour
     {
         TerminalLogic();
     }
+    
+    void OnGUI()
+    {
+        GUI.Label(new Rect(0, 0, 100, 100), (1.0f / Time.smoothDeltaTime).ToString() );        
+    }
 
-    void PrintToTerminal(string value, Colors color)
+    void PrintToTerminal(string value, Colors color = Colors.Default)
     {
         if (value == "")
             return;
@@ -153,7 +157,7 @@ public class TerminalScript : MonoBehaviour
                 return;
             }
 
-            ConnectCommand(args[0]);
+            ConnectCommand(args[0], args[1]);
         }
         else if (command == "clear")
         {
@@ -167,20 +171,36 @@ public class TerminalScript : MonoBehaviour
         }
         else if (command == "host")
         {
-            StartHostCommand();
+            if (args.Count != 2)
+            {
+                PrintToTerminal("Wrong args: Usage: [host (ip:port)]", Colors.Red);
+                return;
+            }
+            
             PrintToTerminal("Trying to host...", Colors.Default);
+            NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(
+                args[0],
+                (ushort)Int32.Parse(args[1]));
+            if (StartHostCommand())
+            {
+                PrintToTerminal($"Hosted started on: {NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Address} and port: {NetworkManager.Singleton.GetComponent<UnityTransport>().ConnectionData.Port}", Colors.Green);
+            }
+            else
+            {
+                PrintToTerminal("Couldn't host server.", Colors.Red);
+            }
 
         }
         else if (command == "server")
         {
-            StartServerCommand();
-            PrintToTerminal("Trying to server...", Colors.Default);
+            //StartServerCommand();
+            PrintToTerminal("Server functionality is disabled until future development...", Colors.Red);
 
         }
         else if (command == "client")
         {
             StartClientCommand();
-            PrintToTerminal("Trying to client...", Colors.Default);
+            PrintToTerminal("Trying to connect to server...", Colors.Default);
 
         }
         else
@@ -202,21 +222,21 @@ public class TerminalScript : MonoBehaviour
     {
         PrintToTerminal("Pong!", Colors.Default);
     }
-    void ConnectCommand(string value)
+    void ConnectCommand(string ip, string port)
     {
-        if (value[0] == '1')
+        NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ip, (ushort)Int32.Parse(port));
+        if (NetworkManager.Singleton.StartClient())
         {
-            PrintToTerminal("Connected to server!", Colors.Green);
+            PrintToTerminal("Connected succesfully to the server!", Colors.Green);
         }
         else
         {
-            PrintToTerminal("Couldn't connect to server! Cause: Host not reachable.", Colors.Red);
+            PrintToTerminal("Couldn't connect to the server!",Colors.Red);
         }
     }
     public bool StartHostCommand()
     {
         return NetworkManager.Singleton.StartHost();
-
     }
     public void StartServerCommand()
     {

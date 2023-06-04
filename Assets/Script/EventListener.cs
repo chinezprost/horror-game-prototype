@@ -7,6 +7,7 @@ public class EventListener : MonoBehaviour
 {
     public GameObject TerminalWindow;
     private TMP_InputField TerminalWindow_InputField;
+    public TMP_Text fpstext;
     public bool IsTerminalOpen = false;
     
     void Start()
@@ -17,6 +18,7 @@ public class EventListener : MonoBehaviour
     void Update()
     {
         TerminalEventListener();
+        fpstext.text = $"{1f / Time.smoothDeltaTime} FPS";
     }
 
     void TerminalEventListener()

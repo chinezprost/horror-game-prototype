@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using Unity.Netcode;
-using Unity.VisualScripting;
-using UnityEditorInternal;
 using UnityEngine;
 using Random = UnityEngine.Random;
 public class RpcManager : NetworkBehaviour
@@ -56,14 +54,37 @@ public class RpcManager : NetworkBehaviour
         {
             footstepAudio.maxDistance = 15;
         }
-        if (type == 0)
+        if (!isRunning)
         {
-            footstepAudio.clip = ResourceManager.Singleton.Footstep_SFX_Left[Random.Range(0, ResourceManager.Singleton.Footstep_SFX_Left.Count)];
+            if (type == 0)
+            {
+                footstepAudio.clip =
+                    ResourceManager.Singleton.Footstep_SFX_Left[
+                        Random.Range(0, ResourceManager.Singleton.Footstep_SFX_Left.Count)];
+            }
+            else
+            {
+                footstepAudio.clip =
+                    ResourceManager.Singleton.Footstep_SFX_Right[
+                        Random.Range(0, ResourceManager.Singleton.Footstep_SFX_Right.Count)];
+            }
         }
         else
         {
-            footstepAudio.clip = ResourceManager.Singleton.Footstep_SFX_Right[Random.Range(0, ResourceManager.Singleton.Footstep_SFX_Right.Count)];
+            if (type == 0)
+            {
+                footstepAudio.clip =
+                    ResourceManager.Singleton.Footstep_SFX_Run_Left[
+                        Random.Range(0, ResourceManager.Singleton.Footstep_SFX_Run_Left.Count)];
+            }
+            else
+            {
+                footstepAudio.clip =
+                    ResourceManager.Singleton.Footstep_SFX_Run_Right[
+                        Random.Range(0, ResourceManager.Singleton.Footstep_SFX_Run_Right.Count)];
+            }
         }
+
         footstepAudio.Play();
     }
     

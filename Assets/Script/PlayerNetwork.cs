@@ -5,7 +5,7 @@ using System.Linq;
 using System.Numerics;
 using NUnit.Framework.Constraints;
 using Unity.Netcode;
-using Unity.VisualScripting;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Diagnostics;
@@ -42,6 +42,8 @@ public class PlayerNetwork : NetworkBehaviour
     
     
     #region scripts/componenets
+
+    public Animator PlayerAnimator;
     public PlayerUIController PlayerUI;
     public PlayerInventory PlayerInventory;
     public CameraController PlayerCameraController;
@@ -66,6 +68,7 @@ public class PlayerNetwork : NetworkBehaviour
 
     [SerializeField] public bool isMoving = false;
     [SerializeField] public bool isRunning = false;
+    [SerializeField] public bool isMovingBackwards = false;
     
     [SerializeField] private float staminaIncreaseCoef = 1.7f;
     [SerializeField] private float staminaUsageCoef = 0.8f;
@@ -102,6 +105,27 @@ public class PlayerNetwork : NetworkBehaviour
     {
         PlayerMovementLogic();
         PlayerCameraLogic();
+        PlayerAnimationLogic();
+    }
+
+    private void PlayerAnimationLogic()
+    {
+        if (!IsOwner || !IsSpawned)
+            return;
+        
+        if (currentPlayerVelocity.magnitude == 0)
+        {
+            PlayerAnimator.SetBool("isMoving", false);
+            PlayerAnimator.SetBool("isRunning", false);
+            PlayerAnimator.SetBool("isBackwards", false);
+        }
+        else
+        {
+            PlayerAnimator.SetBool("isMoving", isMoving);
+            PlayerAnimator.SetBool("isRunning", isRunning);
+            PlayerAnimator.SetBool("isBackwards", isMovingBackwards);
+            PlayerAnimator.SetFloat("playerVelocity", (Mathf.Clamp((PlayerRigidbody.velocity.magnitude+0.1f)/2.5f, 0.5f, 1f)));
+        }
     }
     
     #region collision check
@@ -126,12 +150,14 @@ public class PlayerNetwork : NetworkBehaviour
     {
         if (!IsOwner || !IsSpawned)
             return;
+
+        Camera.main.cullingMask = ~0;
         
         //turn of mesh
-        var playerBody = transform.Find("Player_Body");
+        var playerBody = transform.GetComponentInChildren<SkinnedMeshRenderer>();
         if (playerBody != null)
         {
-            playerBody.GetComponent<MeshRenderer>().enabled = false;
+            playerBody.enabled = false;
         }
 
 
@@ -161,7 +187,7 @@ public class PlayerNetwork : NetworkBehaviour
         PlayerCamera.transform.parent = this.transform;
         Camera.main.transform.parent = PlayerCamera.transform;
         PlayerCamera.transform.parent = Camera.main.transform;
-        PlayerCamera.transform.position = new Vector3(0, 2, 0);
+        PlayerCamera.transform.position = new Vector3(0, 2.25f, 0);
         PlayerCameraController.camera = Camera.main.transform;
         PlayerCameraController.cameraHolder = PlayerCamera.transform;
     }
@@ -195,6 +221,7 @@ public class PlayerNetwork : NetworkBehaviour
         currentPlayerVelocity = Vector3.zero;
         isRunning = false;
         isMoving = false;
+        isMovingBackwards = false;
 
         if (Time.time - lastJumpTime <= .1f)
             return;
@@ -213,6 +240,7 @@ public class PlayerNetwork : NetworkBehaviour
         {
             currentPlayerVelocity += Time.deltaTime * 1000 * -transform.right;
             isRunning = false;
+            isMovingBackwards = true;
         }
         if (Input.GetKey(KeyCode.A))
         {
